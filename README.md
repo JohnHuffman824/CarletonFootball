@@ -1,3 +1,4 @@
 # CarletonFootball
-Author: Jack Huffman
+# Author: Jack Huffman
+
 Carleton College Football Coding Repository
