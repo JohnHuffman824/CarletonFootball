@@ -172,6 +172,7 @@ def delete_duplicates(inData, inDataTwo, outData):
                 newAthlete = Athlete(row[0], row[1], row[0] + ' ' + row[1], row[2], row[11])
                 ref_dict[newAthlete.first_last] = newAthlete
 
+# Takes input from Full_Recruit_Export on ARMS
 def check_duplicates(inData, outData):
     ref_dict = {}
 
@@ -184,11 +185,11 @@ def check_duplicates(inData, outData):
         next(input_reader)
 
         for row in input_reader:
-            check_first_last = row[0] + ' ' + row[1]
-            first = row[0]
-            last = row[1]
-            coach = row[55]
-            state = row[27]
+            check_first_last = row[1] + ' ' + row[3]
+            first = row[1]
+            last = row[3]
+            coach = row[58]
+            state = row[30]
             newAthlete = Athlete(first, last, check_first_last, state, coach, None, None)
             if check_first_last not in ref_dict:
                 ref_dict[check_first_last] = newAthlete
@@ -299,19 +300,23 @@ def crossReferenceToole(arms_data, verified_data, camp_data, out_data):
     
 
 def main():
-    arms_data = "./VV-Info-6-27-2023-Correct.csv"
-    verified_data = "./Verified-Toole.csv"
-    camp_data = "ColumbiaCampCombined-Toole-7-6-2023.csv"
+    # arms_data = "./VV-Info-6-27-2023-Correct.csv"
+    # verified_data = "./Verified-Toole.csv"
+    # camp_data = "ColumbiaCampCombined-Toole-7-6-2023.csv"
     # camp_data2 = "Toole-Chicago-AM.csv"
     # camp_data3 = "Toole-Chicago-PM.csv"
-    out_data = "ColumbiaCampCombined-Updated-Toole-7-6-2023.csv"
+    # out_data = "ColumbiaCampCombined-Updated-Toole-7-6-2023.csv"
     # out_data2 = "Toole-Chicago-AM-UPDATED.csv"
     # out_data3 = "Toole-Chicago-PM-UPDATED.csv"
-    crossReferenceToole(arms_data, verified_data, camp_data, out_data)
+    # crossReferenceToole(arms_data, verified_data, camp_data, out_data)
     
     # crossReferenceToole(arms_data, verified_data, camp_data2, out_data2)
     
     # crossReferenceToole(arms_data, verified_data, camp_data3, out_data3)
+    armsData = "./allData/FullRecruitExport9-18-2023.csv"
+    duplicates = "duplicates9-18-2023.csv"
+    check_duplicates(armsData, duplicates)
+
 
 
 if __name__ == "__main__":
