@@ -113,7 +113,7 @@ import csv
 
 # Object Oriented cross refrencing program. 
 # inData: csv file of new UP TO DATE data that we wish to check whether it is recorded in database
-# refData: csv file of data kept in our database
+# refData: csv file of data kept in our database, use Full_Recruit_Export in ARMS
 # outData: csv file where recruits who are in inData but not in database (refData) are recorded
 #THIS ONE IS USED WHEN THE INDATA HAS FIRST AND LAST NAME COMBINED INTO ONE FIELD
 def crossReference2(inData, refData, outData):
@@ -129,23 +129,25 @@ def crossReference2(inData, refData, outData):
             # Format irregularity between files accounted for here
             row = [col.replace('"','') for col in row]
             # Last, First, Last First, School, Email
-            newAthlete = Athlete(row[1], row[0], row[0] + ' ' + row[1], row[0], row[0])
+            newAthlete = Athlete(row[1], row[3], row[1] + ' ' + row[3], None, None, None, None)
             ref_dict[newAthlete.first_last] = newAthlete
 
-    with open(inData, "r", encoding = "UTF-8") as new_file, open(outData, "w", encoding = "UTF-8", newline="") as output_file:
-        input_reader = csv.reader(new_file)
+    with open(inData, "r", encoding = "UTF-8") as read_file, open(outData, "w", encoding = "UTF-8", newline="") as output_file:
+        input_reader = csv.reader(read_file)
         output_writer = csv.writer(output_file)
     
         # write the header row
-        # output_writer.writerow(["Last", "First", "High School", "State", "Grad Year", "Pos.", "GPA", "Email", "Mobile Number", "Hudl Film", "Parent/Guardian 1 Name", "Parent/Guardian 1 Email", "Parent/Guardian 1 Phone", "Twitter Handle", "Home Address", "City", "State", "Zip"])
-        output_writer.writerow(["Last","First","Twitter Handle","Twitter DM Status","Coach Priority Level for Admissions","GPA","Date Of Birth","Pos.","Height","Weight","Mobile Number","Email","Home Address","City","State","Zip","High School","Grad Year","Hudl Film","HC First","HC Last","HC Phone","HC Email","Jersey#","Source"])
+        output_writer.writerow(["First Name","Last Name","GPA","Grad. Year","Jersey #","High School","Street 1","City","State","Postal Code","Mobile Phone","Email","Primary Position","Other Sports Played","Academic Interest 1","Birth Date","HUDL Link","Twitter"])
         next(input_reader)
         # iterate through the new data
         for row in input_reader:
-            check_first_last = row[1] + ' ' + row[0]
+            check_first_last = row[0] + ' ' + row[1]
             if check_first_last not in ref_dict:
                 output_writer.writerow(row)
 
+# Takes input from Full_Recruit_Export on ARMS, deletes duplicates from external spreadsheet which are already in ARMS
+# inData is ARMS data, inDataTwo is the external prospect list csv
+# THINK THIS IS FUCKED UP RIGHT NOW
 def delete_duplicates(inData, inDataTwo, outData):
     ref_dict = {}
 
@@ -154,22 +156,22 @@ def delete_duplicates(inData, inDataTwo, outData):
         input_reader_two = csv.reader(new_file_two)
         output_writer = csv.writer(output_file)
     
-        # write the header row
-        output_writer.writerow(["Last", "First", "Pos.", "Email", "Height", "Weight", "GPA", "Grad Year", "High School", "State", "Twitter", "Phone", "Camp", "Film Link"])
+        # write the header row, change to be the header of inDataTwo
+        output_writer.writerow(["First Name","Last Name","GPA","Grad. Year","Jersey #","High School","Street 1","City","State","Postal Code","Mobile Phone","Email","Primary Position","Other Sports Played","Academic Interest 1","Birth Date","HUDL Link","Twitter"])
         next(input_reader)
         next(input_reader_two)
 
         for row in input_reader:
-            check_first_last = row[0] + ' ' + row[1]
+            check_first_last = row[1] + ' ' + row[3]
             if check_first_last not in ref_dict:
                 output_writer.writerow(row)
-                newAthlete = Athlete(row[0], row[1], row[0] + ' ' + row[1], row[2], row[11])
+                newAthlete = Athlete(row[1], row[3], row[1] + ' ' + row[3], None, None, None, None)
                 ref_dict[newAthlete.first_last] = newAthlete
         for row in input_reader_two:
             check_first_last = row[0] + ' ' + row[1]
             if check_first_last not in ref_dict:
                 output_writer.writerow(row)
-                newAthlete = Athlete(row[0], row[1], row[0] + ' ' + row[1], row[2], row[11])
+                newAthlete = Athlete(row[0], row[1], row[0] + ' ' + row[1], None, None, None, None)
                 ref_dict[newAthlete.first_last] = newAthlete
 
 # Takes input from Full_Recruit_Export on ARMS
@@ -313,9 +315,20 @@ def main():
     # crossReferenceToole(arms_data, verified_data, camp_data2, out_data2)
     
     # crossReferenceToole(arms_data, verified_data, camp_data3, out_data3)
-    armsData = "./allData/FullRecruitExport9-18-2023.csv"
-    duplicates = "duplicates9-18-2023.csv"
-    check_duplicates(armsData, duplicates)
+
+
+    # CHECK DATABASE FOR INTERNAL DUPLICATES
+    # armsData = "./allData/Full_Recruit_Export10-25-2023.csv"
+    # duplicates = "duplicates10-25-2023.csv"
+    # check_duplicates(armsData, duplicates)
+
+
+    # DELETE DUPLICATES FROM EXTERNAL PROSPECT LIST
+    armsData = "./allData/Full_Recruit_Export10-25-2023.csv"
+    prospect_list = "./allData/DLEE_ProspectList10-25-2023.csv"
+    prospect_list_updated = "DLEE_Prospect_List_NODUPLICATES_10-25-2023.csv"
+    crossReference2(prospect_list, armsData, prospect_list_updated)
+
 
 
 
