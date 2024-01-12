@@ -3,10 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-# Jack Huffman
-# This code take a CSV of ARMS recruits with no listed highschool information and finds their highschool through their hudl link
-
-
 def get_highschool_from_url(profile_url):
     # Access the player's Hudl profile page
     response = requests.get(profile_url)
@@ -21,15 +17,18 @@ def get_highschool_from_url(profile_url):
             description_content = meta_tag['content']
             highschool_match = re.search(r"More info: (.*?) -", description_content)
 
+            state_abbreviation = description_content[-2:].strip()
+
+
             if highschool_match:
                 highschool_name = highschool_match.group(1).strip()
-                return highschool_name
+                return highschool_name, state_abbreviation
             else:
-                return None
-        else:
-            return None
+                return None, None
+        else: 
+            return None, None
     else:
-        return None
+        return None, None
 
 def process_csv(input_csv, output_csv):
     with open(input_csv, 'r', encoding='utf-8') as input_file, open(output_csv, 'w', newline='', encoding='utf-8') as output_file:
@@ -37,7 +36,7 @@ def process_csv(input_csv, output_csv):
         writer = csv.writer(output_file)
 
         # Write header to output CSV
-        writer.writerow(['First Name', 'Last Name', 'High School'])
+        writer.writerow(['First Name', 'Last Name', 'High School', 'State'])
 
         next(reader)  # Skip header row in input CSV
 
@@ -47,10 +46,10 @@ def process_csv(input_csv, output_csv):
             # Check if there is a valid Hudl link
             if hudl_link:
                 # Extract high school information from the provided Hudl URL
-                highschool = get_highschool_from_url(hudl_link)
+                highschool, state = get_highschool_from_url(hudl_link)
 
                 # Write to output CSV
-                writer.writerow([first_name, last_name, highschool] if highschool else [first_name, last_name, 'No High School Info'])
+                writer.writerow([first_name, last_name, highschool, state] if highschool else [first_name, last_name, 'No High School Info', state])
             else:
                 print(f"Skipping recruit {first_name} {last_name} with no Hudl link.")
 
@@ -60,29 +59,3 @@ if __name__ == "__main__":
 
     process_csv(input_csv, output_csv)
 
-
-
-# Recruits with no hudl link or high school
-# Zephaniah Sitaietasi 
-# Isaac Staley 
-# Nyheem Robertson
-# Mensah Junior Owusu Philip
-# Nysear Smith
-# Victor Velasquez
-# Josiah Rucks
-# Daniel Beckstead
-# Tom Breeze
-# Jason Arredondo
-# Macon Lincoln
-# Jayden Davison
-# Mansur McClain
-# Jack Patock
-# Markus Williams
-# Joshua Gauthier
-# Jerome Curry 
-# Michael Anthony
-# Jamar MacFadden
-# Joshua Gauthier
-# Tacori Allen
-# Mansur McClain
-# Nyheem Robertson
