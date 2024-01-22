@@ -36,7 +36,7 @@ def process_csv(input_csv, output_csv):
         writer = csv.writer(output_file)
 
         # Write header to output CSV
-        writer.writerow(['First Name', 'Last Name', 'High School', 'State'])
+        writer.writerow(['ID', 'First Name', 'Last Name', 'High School', 'State'])
 
         next(reader)  # Skip header row in input CSV
 
@@ -49,7 +49,7 @@ def process_csv(input_csv, output_csv):
                 highschool, state = get_highschool_from_url(hudl_link)
 
                 # Write to output CSV
-                writer.writerow([first_name, last_name, highschool, state] if highschool else [first_name, last_name, 'No High School Info', state])
+                writer.writerow([recruit_id, first_name, last_name, highschool, state] if highschool else [first_name, last_name, 'No High School Info', state])
             else:
                 print(f"Skipping recruit {first_name} {last_name} with no Hudl link.")
 
